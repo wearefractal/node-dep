@@ -5,7 +5,7 @@
     
 To install node-dep, use [npm](http://github.com/isaacs/npm):
 
-        $ npm install -g node-dep
+        $ npm install node-dep
 
 ## Usage
 
