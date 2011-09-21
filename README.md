@@ -9,8 +9,41 @@ To install node-dep, use [npm](http://github.com/isaacs/npm):
 
 ## Usage
 
-Nothing here yet
+```
+var analyzer = require('node-dep');
+var options = {
+  package: __dirname + '/package.json',
+  recursive: true
+};
+analyzer.analyze(options, function(deps) {
+  return console.log(deps);
+});
 
+```
+
+will return
+
+```
+{ 'coffee-script': '1.1.2',
+  'node-log': '0.0.2',
+  protege: '0.0.8',
+  npm: '1.0.30',
+  colors: '0.5.0',
+  semver: '1.0.9',
+  ini: '1.0.1',
+  slide: '1.1.3',
+  abbrev: '1.0.3',
+  'graceful-fs': '1.0.0',
+  minimatch: '0.0.4',
+  nopt: '1.0.8',
+  'node-uuid': '1.2.0',
+  'proto-list': '1.0.0',
+  rimraf: '1.0.6',
+  request: '2.1.1',
+  which: '1.0.2',
+  'lru-cache': '1.0.4' }
+
+```
 ## Examples
 
 You can view further examples in the [example folder.](https://github.com/wearefractal/node-dep/tree/master/examples)
