@@ -57,7 +57,7 @@ module.exports =
     throw new Error 'options.package is required for analysis.' unless options.package
         
     path.exists options.package, (exists) ->
-      throw new Error options.page + ' does not exist.' unless exists
+      throw new Error options.package + ' does not exist.' unless exists
       fs.readFile options.package, (err, data) ->
         if err
           throw err
