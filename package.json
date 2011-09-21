@@ -1,7 +1,7 @@
 {
    "name":"node-dep",
    "description":"Dependency analyzer",
-   "version":"0.0.2",
+   "version":"0.0.3",
    "homepage":"http://github.com/wearefractal/node-dep",
    "repository":"git://github.com/wearefractal/node-dep.git",
    "author":"Fractal <contact@wearefractal.com> (http://wearefractal.com/)",

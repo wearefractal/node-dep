@@ -28,20 +28,22 @@ getInfo = (package, options, cb) ->
       return if err
       pack = JSON.parse res
       throw new Error 'Error parsing NPM registry response!' unless pack
-      filtPack = {}
-      filtPack.name = pack.name
-      filtPack.latest = pack['dist-tags'].latest
-      filtPack.dependencies = pack.versions[filtPack.latest].dependencies
-      filtPack.download = pack.versions[filtPack.latest].tarball
-      
-      depends[filtPack.name] = filtPack.latest
-      filtPack.dependencies = (x for x of filtPack.dependencies when !depends.hasOwnProperty(x)) # filter
+      latest = pack['dist-tags'].latest
+      newDeps = pack.versions[latest].dependencies
+      newDeps = (x for x of newDeps when !depends.hasOwnProperty(x)) # filter
       left--
+      if options.verbose
+        filtPack = {}
+        filtPack.version = latest
+        filtPack.download = pack.versions[latest].dist.tarball
+        depends[pack.name] = filtPack
+      else
+        depends[pack.name] = latest
       #console.log left
-      if filtPack.dependencies.length > 0
-        left += filtPack.dependencies.length
-        #console.log 'left: ' + filtPack.dependencies
-        getDependencies filtPack.dependencies, options, cb
+      if newDeps.length > 0
+        left += newDeps.length
+        #console.log 'left: ' + newDeps
+        getDependencies newDeps, options, cb
       else if left is 0
         if cb?
           #console.log 'Finished'
@@ -50,6 +52,8 @@ getInfo = (package, options, cb) ->
 module.exports =
   analyze: (options, cb) ->
     options.recursive ?= true
+    options.verbose ?= false
+    
     throw new Error 'options.package is required for analysis.' unless options.package
         
     path.exists options.package, (exists) ->
