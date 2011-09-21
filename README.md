@@ -1,11 +1,11 @@
-**Nothing here yet**
+**node-dep is a dependency analyzer for NodeJS**
 
 
 ## Installation
     
-To install APPNAME, use [npm](http://github.com/isaacs/npm):
+To install node-dep, use [npm](http://github.com/isaacs/npm):
 
-        $ npm install -g APPNAME
+        $ npm install -g node-dep
 
 ## Usage
 
@@ -13,7 +13,7 @@ Nothing here yet
 
 ## Examples
 
-You can view further examples in the [example folder.](https://github.com/wearefractal/APPNAME/tree/master/examples)
+You can view further examples in the [example folder.](https://github.com/wearefractal/node-dep/tree/master/examples)
 
 ## LICENSE
 

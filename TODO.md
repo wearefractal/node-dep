@@ -6,4 +6,5 @@
 
 ### Major
 
-  * Nothing here yet
+  * Accept versions and use semver to find proper dependencies
+  * Dependency comparisons on merge, make sure everything is compatible with eachother

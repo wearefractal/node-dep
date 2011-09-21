@@ -11,7 +11,7 @@
       "coffee-script":"*",
       "node-log":"*",
       "protege":"*",
-      "get":"*"
+      "npm":"*"
    },
    "engines":{
       "node":">= 0.4.0"
