@@ -1,12 +1,10 @@
-log = require 'node-log'
-log.setName 'node-dep'
-  
 fs = require 'fs'
 path = require 'path'
 get = require 'get'
 npmls = require 'npm/lib/utils/read-installed'
 
-deps = {}
+depends = {}
+left = 0
 
 getDependencies = (deps, options, cb) ->
   if !deps or deps is {}
@@ -14,15 +12,18 @@ getDependencies = (deps, options, cb) ->
   if !options.recursive
     return cb(dep for dep of deps when dep?)
       
-  for x of deps
+  if !Array.isArray deps    
+    deps = (x for x of deps when !depends.hasOwnProperty(x))
+    
+  for x in deps
+    depends[x] = 'in progress'
+    if left is 0 then left = deps.length
     getInfo x, options, (info) ->
-      console.log info
+      cb info
       
-getInfo = (package, options, cb) ->
-    # TODO: Accept versions and use semver to find proper dependencies
+getInfo = (package, options, cb) ->    
     info = new get uri: 'http://registry.npmjs.org/' + package
     info.asString (err, res) ->
-      console.log 'http://registry.npmjs.org/' + package
       # throw err if err
       return if err
       pack = JSON.parse res
@@ -33,10 +34,18 @@ getInfo = (package, options, cb) ->
       filtPack.dependencies = pack.versions[filtPack.latest].dependencies
       filtPack.download = pack.versions[filtPack.latest].tarball
       
-      deps[filtPack.name] = filtPack.latest
-      filtPack.dependencies = (x for x of filtPack.dependencies when !deps.hasOwnProperty(x)) # filter
-      if filtPack.dependencies? and filtPack.dependencies isnt {} and filtPack.dependencies isnt []
+      depends[filtPack.name] = filtPack.latest
+      filtPack.dependencies = (x for x of filtPack.dependencies when !depends.hasOwnProperty(x)) # filter
+      left--
+      #console.log left
+      if filtPack.dependencies.length > 0
+        left += filtPack.dependencies.length
+        #console.log 'left: ' + filtPack.dependencies
         getDependencies filtPack.dependencies, options, cb
+      else if left is 0
+        if cb?
+          #console.log 'Finished'
+          cb depends
         
 module.exports =
   analyze: (options, cb) ->

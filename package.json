@@ -1,7 +1,7 @@
 {
    "name":"node-dep",
    "description":"Dependency analyzer",
-   "version":"0.0.1",
+   "version":"0.0.2",
    "homepage":"http://github.com/wearefractal/node-dep",
    "repository":"git://github.com/wearefractal/node-dep.git",
    "author":"Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
@@ -9,7 +9,6 @@
    
    "dependencies":{
       "coffee-script":"*",
-      "node-log":"*",
       "protege":"*",
       "get":"*"
    },
