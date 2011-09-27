@@ -2,9 +2,9 @@ fs = require 'fs'
 path = require 'path'
 get = require 'get'
 npmls = require 'npm/lib/utils/read-installed'
+async = require 'async'
 
 depends = {}
-left = 0
 
 getDependencies = (deps, options, cb) ->
   if !deps or deps is {}
@@ -14,24 +14,19 @@ getDependencies = (deps, options, cb) ->
       
   if !Array.isArray deps    
     deps = (x for x of deps when !depends.hasOwnProperty(x))
-    
-  for x in deps
-    depends[x] = 'in progress'
-    if left is 0 then left = deps.length
-    getInfo x, options, (info) ->
-      cb info
+  async.forEach deps, ((item, call) -> getInfo(item, options, call)), -> cb depends
       
-getInfo = (package, options, cb) ->    
+getInfo = (package, options, call) ->    
     info = new get uri: 'http://registry.npmjs.org/' + package
     info.asString (err, res) ->
-      # throw err if err
-      return if err
+      if err
+        depends[package] = 'Failed-to-resolve'
+        return call()
       pack = JSON.parse res
       throw new Error 'Error parsing NPM registry response!' unless pack
       latest = pack['dist-tags'].latest
       newDeps = pack.versions[latest].dependencies
       newDeps = (x for x of newDeps when !depends.hasOwnProperty(x)) # filter
-      left--
       if options.verbose
         filtPack = {}
         filtPack.version = latest
@@ -39,15 +34,10 @@ getInfo = (package, options, cb) ->
         depends[pack.name] = filtPack
       else
         depends[pack.name] = latest
-      #console.log left
       if newDeps.length > 0
-        left += newDeps.length
-        #console.log 'left: ' + newDeps
-        getDependencies newDeps, options, cb
-      else if left is 0
-        if cb?
-          #console.log 'Finished'
-          cb depends
+        getDependencies newDeps, options, call
+      else
+        call()
         
 module.exports =
   analyze: (options, cb) ->
@@ -59,9 +49,5 @@ module.exports =
     path.exists options.package, (exists) ->
       throw new Error options.package + ' does not exist.' unless exists
       fs.readFile options.package, (err, data) ->
-        if err
-          throw err
-        else
-          getDependencies JSON.parse(data).dependencies, options, cb
-    
-      
+        throw err if err
+        getDependencies JSON.parse(data).dependencies, options, cb
