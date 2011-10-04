@@ -1,3 +1,7 @@
+0.0.5 / October 3, 2011
+==================
+  * JS bug fix
+
 0.0.4 / September 21, 2011
 ==================
   * Code clean-up thanks to async
@@ -14,3 +18,4 @@
 0.0.1 / September 21, 2011
 ==================
   * Start of the project
+

@@ -1,3 +1,4 @@
+require('coffee-script');
 fs = require 'fs'
 path = require 'path'
 get = require 'get'
@@ -11,12 +12,12 @@ getDependencies = (deps, options, cb) ->
     return cb null
   if !options.recursive
     return cb(dep for dep of deps when dep?)
-      
-  if !Array.isArray deps    
+
+  if !Array.isArray deps
     deps = (x for x of deps when !depends.hasOwnProperty(x))
   async.forEach deps, ((item, call) -> getInfo(item, options, call)), -> cb depends
-      
-getInfo = (package, options, call) ->    
+
+getInfo = (package, options, call) ->
     info = new get uri: 'http://registry.npmjs.org/' + package
     info.asString (err, res) ->
       if err
@@ -38,16 +39,17 @@ getInfo = (package, options, call) ->
         getDependencies newDeps, options, call
       else
         call()
-        
+
 module.exports =
   analyze: (options, cb) ->
     options.recursive ?= true
     options.verbose ?= false
-    
+
     throw new Error 'options.package is required for analysis.' unless options.package
-        
+
     path.exists options.package, (exists) ->
       throw new Error options.package + ' does not exist.' unless exists
       fs.readFile options.package, (err, data) ->
         throw err if err
         getDependencies JSON.parse(data).dependencies, options, cb
+
